@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'teamti.fun'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation("org.bytedeco:javacv-platform:1.5.10")
+    implementation('net.coobird:thumbnailator:0.4.8')
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava {
+    options.compilerArgs += ['--enable-preview']
+}
