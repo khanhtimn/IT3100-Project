@@ -5,10 +5,13 @@ import org.bytedeco.javacpp.indexer.FloatIndexer;
 import org.bytedeco.opencv.opencv_core.*;
 import org.bytedeco.opencv.opencv_dnn.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.nio.file.StandardCopyOption;
+
 
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_dnn.*;
@@ -17,17 +20,18 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 public class FaceDetection {
 
     private static final Net net;
+    private static final String PROTO_FILE;
+    private static final String CAFFE_MODEL_FILE;
 
     static {
         try {
-            File PROTO_FILE = new File(Objects.requireNonNull(FaceDetection.class.getResource("/models/deploy.prototxt")).toURI());
-            File CAFFE_MODEL_FILE = new File(Objects.requireNonNull(FaceDetection.class.getResource("/models/res10_300x300_ssd_iter_140000.caffemodel")).toURI());
-            net = readNetFromCaffe(PROTO_FILE.getAbsolutePath(), CAFFE_MODEL_FILE.getAbsolutePath());
-        } catch (URISyntaxException ex) {
-            throw new RuntimeException(ex);
+            PROTO_FILE = copyResourceToTempFile("models/deploy.prototxt").toString();
+            CAFFE_MODEL_FILE = copyResourceToTempFile("models/res10_300x300_ssd_iter_140000.caffemodel").toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        net = readNetFromCaffe(PROTO_FILE, CAFFE_MODEL_FILE);
     }
-
 
     public static void detectAndDraw(Mat image) {//detect faces and draw a blue rectangle arroung each face
 
@@ -60,4 +64,17 @@ public class FaceDetection {
         }
     }
 
+    //TODO: Find a better solution for accessing resources in JAR files
+    private static Path copyResourceToTempFile(String resourcePath) throws IOException {
+        ClassLoader classLoader = FaceDetection.class.getClassLoader();
+        try (InputStream resourceStream = classLoader.getResourceAsStream(resourcePath)) {
+            if (resourceStream == null) {
+                throw new IOException("Resource not found: " + resourcePath);
+            }
+            Path tempFile = Files.createTempFile("temp-", "-" + Path.of(resourcePath).getFileName().toString());
+            Files.copy(resourceStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            tempFile.toFile().deleteOnExit(); // Ensure temp file is deleted on exit
+            return tempFile;
+        }
+    }
 }
