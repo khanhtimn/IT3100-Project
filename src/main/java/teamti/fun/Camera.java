@@ -11,6 +11,7 @@ import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_FRAME_WIDTH;
 
 public class Camera {
     public static void main(String[] args) {
+        boolean running = true;
         OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
 
         final int RES_WIDTH = 1280;
@@ -32,10 +33,20 @@ public class Camera {
         mainframe.setLocationRelativeTo(null);
         mainframe.setVisible(true);
 
-        while (true) {
+        while (running) {
             while (capture.read(colorimg) && mainframe.isVisible()) {
                 FaceDetection.detectAndDraw(colorimg);
                 mainframe.showImage(converter.convert(colorimg));
+            }
+            if (!mainframe.isVisible()) {
+                running = false;
+            } else {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    running = false;
+                }
             }
         }
     }
