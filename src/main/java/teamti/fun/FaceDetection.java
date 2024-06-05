@@ -36,12 +36,12 @@ public class FaceDetection {
     public static void detectAndDraw(Mat image) {
 
         //resize the image to match the input size of the model
-        resize(image, image, new Size(300, 300));
+        resize(image, image, new Size(1280, 960));
 
 
         //create a 4-dimensional blob from image with NCHW (Number of images in the batch, Channel, Height, Width) dimensions order,
         //https://docs.opencv.org/trunk/d6/d0f/group__dnn.html#gabd0e76da3c6ad15c08b01ef21ad55dd8
-        Mat blob = blobFromImage(image, 1.0, new Size(300, 300), new Scalar(104.0, 177.0, 123.0, 0), false, false, CV_32F);
+        Mat blob = blobFromImage(image, 1.0, new Size(640, 640), new Scalar(104.0, 177.0, 123.0, 0), false, false, CV_32F);
 
         //set the input to network model
         net.setInput(blob);
