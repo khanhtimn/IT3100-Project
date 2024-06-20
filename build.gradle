@@ -1,23 +1,52 @@
 plugins {
     id 'java'
-    id("io.github.goooler.shadow") version "8.1.7"
+    id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.15'
     id 'org.bytedeco.gradle-javacpp-platform' version "1.5.10"
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
-group = 'teamti.fun'
-version = '0.1'
+group 'teamti.fun'
+version '1.0'
 
 repositories {
     mavenCentral()
     gradlePluginPortal()
 }
 
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'teamti.fun.facedetect'
+    mainClass = 'teamti.fun.facedetect.FaceDetectionApp'
+}
+
+javafx {
+    version = '21'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.swing']
+}
+
 dependencies {
+    implementation('org.controlsfx:controlsfx:11.2.1')
+    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
     implementation("org.bytedeco:javacv-platform:1.5.10")
+    implementation("org.bytedeco:openblas-platform:0.3.26-1.5.10")
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'teamti.fun.facedetect.FaceDetectionApp'
+    }
 }
 
 shadowJar {
-    archiveBaseName.set('FaceDetect')
+    archiveBaseName.set('FaceDetection')
     archiveClassifier.set('')
     archiveVersion.set('0.1')
     exclude 'org/bytedeco/javacpp/linux-/.'
@@ -27,6 +56,6 @@ shadowJar {
     exclude 'META-INF/*.SF'
 
     manifest {
-        attributes 'Main-Class': 'teamti.fun.Camera'
+        attributes 'Main-Class': 'teamti.fun.facedetect.FaceDetectionApp'
     }
 }

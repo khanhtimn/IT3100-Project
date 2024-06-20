@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.canvas.Canvas?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="teamti.fun.facedetect.FaceDetectionController">
+    <ImageView fx:id="videoView"/>
+    <Canvas fx:id="overlayCanvas" />
+</StackPane>
